@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            background: #222;
+            color: #eee;
+            font-family: "Microsoft YaHei", sans-serif;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+        }
+        header {
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            /* data-tauri-drag-region 元素本身透明，子按钮不能带这个属性才不会挡点击 */
+        }
+        header button {
+            background: transparent;
+            border: none;
+            color: #ddd;
+            width: 30px; height: 30px;
+            cursor: pointer;
+        }
+        header button:hover { background: rgba(255,255,255,0.1); }
+        header .close:hover { background: #e81123; color: #fff; }
+        main { flex: 1; /* 内容区 */ }
+    </style>
+</head>
+<body>
+    <header data-tauri-drag-region>
+        <span data-tauri-drag-region>Hana-Agent</span>
+        <div style="display:flex">
+            <button onclick="window.__TAURI__.window.getCurrentWindow().minimize()">─</button>
+            <button onclick="window.__TAURI__.window.getCurrentWindow().toggleMaximize()">▢</button>
+            <button class="close" onclick="window.__TAURI__.window.getCurrentWindow().close()">✕</button>
+        </div>
+    </header>
+    <main>
+        <!-- 你的页面内容 -->
+    </main>
+</body>
+</html>
