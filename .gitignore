@@ -13,7 +13,7 @@ dist-ssr
 *.local
 
 # bundled server (430MB, shipped via tauri resources, not tracked)
-src-tauri/server/
+server/
 
 # Editor directories and files
 .vscode/*
