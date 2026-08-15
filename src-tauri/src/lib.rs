@@ -3,7 +3,7 @@ use simple_tauri_lib::simple_serve;
 
 #[tauri::command]
 fn ipc_version() -> String {
-    "1.0.0".to_string()
+    "0.1.0".to_string()
 }
 
 #[cfg(windows)]
@@ -36,11 +36,7 @@ fn on_tray_before() -> Result<(), String> {
     simple_serve::wait_port(3080).map_err(|e| format!("服务器启动超时: {e}"))?;
     // 关闭加载窗口
     simple_tray::close_window("load");
-    Ok(())
-}
-
-// 托盘创建后回调
-fn on_tray_after() -> Result<(), String> {
+    // 显示主窗口
     simple_tray::show_window("main");
     Ok(())
 }

@@ -1,6 +1,7 @@
 # dsh — simple-tauri 使用示例
 
 基于 [simple-tauri](https://github.com/svier0/simple-tauri) 库的 Tauri 2 桌面应用示例。
+本示例演示了快速将Deepseek-Harness打包为桌面客户端。
 
 ## 功能
 
