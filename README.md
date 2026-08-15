@@ -8,7 +8,7 @@
 - **多窗口**：主窗口（main）、设置窗口（setting）、加载窗口（load）
 - **内置服务器**：启动时拉起 `server/dsh-0.1.0`（run.bat），主窗口加载 `http://127.0.0.1:3080`
 - **单实例**：Windows 互斥体，防止重复启动
-- **NSIS 打包**：服务器目录作为资源一并打包（`tauri.conf.json` 中 `resources: ["server/"]`）
+- **NSIS 打包**：服务器目录作为资源一并打包（`tauri.conf.json` 中 `resources` 映射 `"../server/" → "server/"`）
 
 ## 项目结构
 
@@ -17,8 +17,8 @@ src-tauri/
 ├── src/
 │   ├── main.rs        # 单实例互斥体 + 入口
 │   └── lib.rs         # simple-tauri 库的全部配置（不到 60 行）
-├── server/dsh-0.1.0/  # 内置服务器（run.bat 启动）
-├── tauri.conf.json    # Tauri 配置（resources 含 server/）
+├── tauri.conf.json    # Tauri 配置（resources 映射打包 server/）
+server/dsh-0.1.0/      # 内置服务器（run.bat 启动），打包资源，不跟踪 git
 src/
 ├── load.html          # 启动加载页
 ├── setting.html       # 设置页
@@ -106,7 +106,7 @@ cp -f target/release/dsh.exe target/dsh.exe
 cargo tauri build
 ```
 
-生成 NSIS 安装包，服务器目录作为资源随包分发，安装后按 exe 所在目录解析 `server/dsh-0.1.0`。
+生成 NSIS 安装包，服务器目录作为资源随包分发，安装后按 exe 所在目录解析 `server/dsh-0.1.0`（打包时通过 `"../server/" → "server/"` 映射，路径与源码目录一致）。
 
 ## 依赖
 

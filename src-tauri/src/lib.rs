@@ -31,7 +31,7 @@ fn on_tray_before() -> Result<(), String> {
     // 显示加载窗口
     simple_tray::show_window("load");
     // 启动服务器
-    simple_serve::start("server/dsh-0.1.0", "run.bat").map_err(|e| format!("服务器启动失败: {e}"))?;
+    simple_serve::start("server/dsh-0.1.0-rc.6", "run.bat").map_err(|e| format!("服务器启动失败: {e}"))?;
     // 检测端口3080 拉起成功才返回继续走托盘创建逻辑
     simple_serve::wait_port(3080).map_err(|e| format!("服务器启动超时: {e}"))?;
     // 关闭加载窗口
