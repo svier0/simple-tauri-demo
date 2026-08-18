@@ -3,7 +3,7 @@
 
 fn main() {
     #[cfg(windows)]
-    if simple_tauri_lib::check_mutex("dsh") {
+    if simple_tauri::check_mutex("dsh") {
         return;
     }
     dsh_lib::run()

@@ -1,5 +1,5 @@
-use simple_tauri_lib::simple_tray;
-use simple_tauri_lib::simple_serve;
+use simple_tauri::simple_tray;
+use simple_tauri::simple_serve;
 
 #[tauri::command]
 fn ipc_version() -> String {
