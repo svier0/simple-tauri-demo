@@ -833,7 +833,6 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tauri-plugin-opener",
- "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -3138,8 +3137,6 @@ checksum = "3a219298ac11a56ea9a6d2120044824d6f01aeb034955e7af7bc16858527deea"
 [[package]]
 name = "simple-tauri"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04b020d1559c8ee9ecf1488fca4792447a0ba8db698397316efa87cdd45ba42a"
 dependencies = [
  "serde",
  "serde_json",
@@ -3152,8 +3149,6 @@ dependencies = [
 [[package]]
 name = "simple-tauri-macros"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a9cd7a1d1f9d812838161ad2fac0833325d2da0091f9a9866b39ba3f4039aea"
 dependencies = [
  "proc-macro2",
  "quote",

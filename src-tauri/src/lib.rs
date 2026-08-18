@@ -22,7 +22,7 @@ pub fn run() {
             [],
             ["light"],
         ]"#);
-    simple_tray::hooks!(on_tray_before, on_tray_after, on_quit);
+    simple_tray::hooks!(on_tray_before, _, on_quit);
     simple_tray::run!();
 }
 
