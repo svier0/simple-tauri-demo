@@ -3137,6 +3137,8 @@ checksum = "3a219298ac11a56ea9a6d2120044824d6f01aeb034955e7af7bc16858527deea"
 [[package]]
 name = "simple-tauri"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38646276badc44a109c5ba2cd8f466b91dfb31a85f70e68171c185f20607c01b"
 dependencies = [
  "serde",
  "serde_json",
@@ -3149,6 +3151,8 @@ dependencies = [
 [[package]]
 name = "simple-tauri-macros"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67e3de8ab4a3bd2b8848e47ee6609b8be27e11bec9bddfee451efaf62464894b"
 dependencies = [
  "proc-macro2",
  "quote",
