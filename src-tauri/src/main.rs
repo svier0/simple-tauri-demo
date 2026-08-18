@@ -2,9 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    #[cfg(windows)]
-    if simple_tauri::check_mutex("dsh") {
-        return;
-    }
     dsh_lib::run()
 }

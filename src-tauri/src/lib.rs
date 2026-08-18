@@ -1,21 +1,21 @@
 use simple_tauri::simple_tray;
 use simple_tauri::simple_serve;
 
-#[tauri::command]
-fn ipc_version() -> String {
-    "0.1.0".to_string()
-}
+mod ipc;
 
 #[cfg(windows)]
 pub fn run() {
-    simple_tray::set_ipc_cmds![
-            ipc_version,
-        ];
+    // 互斥 只能启动一个实例
+    simple_tray::mutex!();
+    // 设置ipc函数 自动扫描设定的模块
+    simple_tray::set_ipc_cmds![ipc];
+    // 窗口列表 [id 标题 url 宽 高 有边框]
     simple_tray::set_window_list!(r#"[
             ["main", "", "http://127.0.0.1:3080", 1280.0, 800.0],
             ["setting", "设置","",null,null,false],
             ["load", "Loading","",380,280,false],
         ]"#);
+    // 托盘菜单
     simple_tray::set_tray_menu!(r#"[
             ["show", "显示主界面"],
             ["show-setting", "设置", "show_setting"],
