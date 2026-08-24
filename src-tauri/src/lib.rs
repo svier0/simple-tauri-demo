@@ -28,14 +28,6 @@ pub fn run() {
     simple_tray::run!();
 }
 
-fn ensure_server(ver: &str,dir: &str) -> Result<(), String> {
-    let url = format!("https://registry.npmjs.org/@deepseek-ai/dsh/-/dsh-{}.tgz"
-            ,ver);
-    let extract_dir = "";
-    simple_tauri::utils::unzip_remote(&url,dir,extract_dir)?;
-    Ok(())
-}
-
 // 托盘创建前回调
 fn on_tray_before() -> Result<(), String> {
     // 设置参数
@@ -43,13 +35,10 @@ fn on_tray_before() -> Result<(), String> {
     let autoupdate = false;
 
     //
-    simple_serve::set_work_dir(&workdir);
     simple_serve::set_pkg("npm","@deepseek-ai/dsh");
-    if autoupdate { simple_serve::enable_auto_update(); }
-    simple_serve::set_start_cmd!("run.bat");
+    simple_serve::set_start_cmd!("run.bat");//DSH_HOME=%USERPROFILE%\.dsh ;../node node_modules/@deepseek-ai/dsh/lib/bin.js web
     simple_serve::set_download_url(
-        |ver|format!("https://registry.npmjs.org/@deepseek-ai/dsh/-/dsh-{}.tgz"
-            ,ver),
+        |ver|format!("https://registry.npmjs.org/@deepseek-ai/dsh/-/dsh-{}.tgz",ver),
         "package");
     // simple_serve::set_ensure_server(|ver,dir|{
     //     let url = format!("https://registry.npmjs.org/@deepseek-ai/dsh/-/dsh-{}.tgz"
@@ -58,18 +47,21 @@ fn on_tray_before() -> Result<(), String> {
     //     simple_tauri::utils::unzip_remote(&url,dir,extract_dir)?;
     //     Ok(())
     // });
+    simple_serve::set_work_dir(&workdir);
+    if autoupdate { simple_serve::enable_auto_update(); }
 
     // 显示加载窗口
     simple_tray::show_window("load");
     sh2rs!("sleep 1").ok();
-    // let show_load_tips = |s: &str|{
-    //     simple_tray::runjs("load", &format!("document.querySelector('p.tips').innerHTML='{}'",s));
-    // };
-    // show_load_tips("检测本地服务版本");
+    let show_load_tips = |s: &str|{
+        simple_tray::runjs("load", &format!("document.querySelector('p.tips').innerHTML='{}'",s));
+    };
+    show_load_tips("检测本地服务版本");
 
     // 检查版本更新
     let _ = simple_serve::check_update(false)?;
-    // 启动服务器
+    // 启动服务
+    show_load_tips("服务启动中");
     simple_serve::start()
         .map_err(|e| format!("服务器启动失败: {e}"))?;
     // 检测端口3080 拉起成功才返回继续走托盘创建逻辑
