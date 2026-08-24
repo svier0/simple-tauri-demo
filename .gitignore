@@ -12,9 +12,6 @@ dist
 dist-ssr
 *.local
 
-# bundled server (430MB, shipped via tauri resources, not tracked)
-server/
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

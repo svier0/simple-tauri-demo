@@ -28,7 +28,7 @@
       }
     },
     "resources": {
-      "../server/": "server/"
+      "../target/server/": "server/"
     }
   }
 }

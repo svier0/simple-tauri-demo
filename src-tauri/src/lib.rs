@@ -31,7 +31,6 @@ pub fn run() {
 // 托盘创建前回调
 fn on_tray_before() -> Result<(), String> {
     // 设置参数
-    let workdir = "server/dsh-<ver>";
     let autoupdate = false;
 
     //
@@ -47,7 +46,6 @@ fn on_tray_before() -> Result<(), String> {
     //     simple_tauri::utils::unzip_remote(&url,dir,extract_dir)?;
     //     Ok(())
     // });
-    simple_serve::set_work_dir(&workdir);
     if autoupdate { simple_serve::enable_auto_update(); }
 
     // 显示加载窗口
