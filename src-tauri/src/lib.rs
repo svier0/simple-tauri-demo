@@ -54,6 +54,10 @@ fn on_tray_before() -> Result<(), String> {
     let show_load_tips = |s: &str|{
         simple_tray::runjs("load", &format!("document.querySelector('p.tips').innerHTML='{}'",s));
     };
+    show_load_tips("安装Node");
+    simple_tauri::utils::ensure_node("","");
+    show_load_tips("安装PNPM");
+    // 
     show_load_tips("检测本地服务版本");
 
     // 检查版本更新
