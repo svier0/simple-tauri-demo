@@ -3455,14 +3455,16 @@ checksum = "3a219298ac11a56ea9a6d2120044824d6f01aeb034955e7af7bc16858527deea"
 
 [[package]]
 name = "simple-tauri"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "native-tls",
  "serde",
  "serde_json",
+ "shlex",
  "simple-tauri-macros",
  "tauri",
  "tauri-plugin-opener",
+ "tokio",
  "ureq",
  "url",
  "windows-sys 0.59.0",
@@ -3471,7 +3473,7 @@ dependencies = [
 
 [[package]]
 name = "simple-tauri-macros"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "proc-macro2",
  "quote",

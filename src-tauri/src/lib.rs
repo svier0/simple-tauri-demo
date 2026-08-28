@@ -31,10 +31,12 @@ pub fn run() {
 // 托盘创建前回调
 fn on_tray_before() -> Result<(), String> {
     // 设置参数
-    let autoupdate = false;
+    let _autoupdate = false;
 
     //
     simple_serve::set_pkg("npm","@deepseek-ai/dsh");
+    simple_tauri::utils::ensure_node("","")?;
+    sh2rs!("echo \"\" > run.bat").ok();
     simple_serve::set_start_cmd!("run.bat");//DSH_HOME=%USERPROFILE%\.dsh ;../node node_modules/@deepseek-ai/dsh/lib/bin.js web
     simple_serve::set_download_url(
         |ver|format!("https://registry.npmjs.org/@deepseek-ai/dsh/-/dsh-{}.tgz",ver),
@@ -46,30 +48,30 @@ fn on_tray_before() -> Result<(), String> {
     //     simple_tauri::utils::unzip_remote(&url,dir,extract_dir)?;
     //     Ok(())
     // });
-    if autoupdate { simple_serve::enable_auto_update(); }
+    // if autoupdate { simple_serve::enable_auto_update(); }
 
-    // 显示加载窗口
-    simple_tray::show_window("load");
-    sh2rs!("sleep 1").ok();
-    let show_load_tips = |s: &str|{
-        simple_tray::runjs("load", &format!("document.querySelector('p.tips').innerHTML='{}'",s));
-    };
-    show_load_tips("安装Node");
-    simple_tauri::utils::ensure_node("","");
-    show_load_tips("安装PNPM");
-    // 
-    show_load_tips("检测本地服务版本");
+    // // 显示加载窗口
+    // simple_tray::show_window("load");
+    // sh2rs!("sleep 1").ok();
+    // let show_load_tips = |s: &str|{
+    //     simple_tray::runjs("load", &format!("document.querySelector('p.tips').innerHTML='{}'",s));
+    // };
+    // show_load_tips("安装Node");
+    // simple_tauri::utils::ensure_node("","");
+    // show_load_tips("安装PNPM");
+    // //
+    // show_load_tips("检测本地服务版本");
 
-    // 检查版本更新
-    let _ = simple_serve::check_update(false)?;
-    // 启动服务
-    show_load_tips("服务启动中");
-    simple_serve::start()
-        .map_err(|e| format!("服务器启动失败: {e}"))?;
-    // 检测端口3080 拉起成功才返回继续走托盘创建逻辑
-    simple_serve::wait_port(3080).map_err(|e| format!("服务器启动超时: {e}"))?;
-    // 关闭加载窗口
-    simple_tray::close_window("load");
+    // // 检查版本更新
+    // let _ = simple_serve::check_update(false)?;
+    // // 启动服务
+    // show_load_tips("服务启动中");
+    // simple_serve::start()
+    //     .map_err(|e| format!("服务器启动失败: {e}"))?;
+    // // 检测端口3080 拉起成功才返回继续走托盘创建逻辑
+    // simple_serve::wait_port(3080).map_err(|e| format!("服务器启动超时: {e}"))?;
+    // // 关闭加载窗口
+    // simple_tray::close_window("load");
     // 显示主窗口
     simple_tray::show_window("main");
     Ok(())
