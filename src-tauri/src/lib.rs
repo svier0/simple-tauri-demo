@@ -36,18 +36,18 @@ fn on_tray_before() -> Result<(), String> {
     //
     simple_serve::set_pkg("npm","@deepseek-ai/dsh");
     simple_tauri::utils::ensure_node("","")?;
-    sh2rs!("echo \"\" > run.bat").ok();
-    simple_serve::set_start_cmd!("run.bat");//DSH_HOME=%USERPROFILE%\.dsh ;../node node_modules/@deepseek-ai/dsh/lib/bin.js web
-    simple_serve::set_download_url(
-        |ver|format!("https://registry.npmjs.org/@deepseek-ai/dsh/-/dsh-{}.tgz",ver),
-        "package");
-    // simple_serve::set_ensure_server(|ver,dir|{
-    //     let url = format!("https://registry.npmjs.org/@deepseek-ai/dsh/-/dsh-{}.tgz"
-    //        ,ver);
-    //     let extract_dir = "package";
-    //     simple_tauri::utils::unzip_remote(&url,dir,extract_dir)?;
-    //     Ok(())
-    // });
+    #[cfg(windows)]
+    sh2rs!("echo \"\" > start.bat").ok();
+    #[cfg(not(windows))]
+    sh2rs!("echo \"\" > start.sh").ok();
+    #[cfg(windows)]
+    simple_serve::set_start_cmd!("start.bat");//DSH_HOME=%USERPROFILE%\.dsh ;../node node_modules/@deepseek-ai/dsh/lib/bin.js web
+    #[cfg(not(windows))]
+    simple_serve::set_start_cmd!("start.sh");//DSH_HOME=%USERPROFILE%\.dsh ;../node node_modules/@deepseek-ai/dsh/lib/bin.js web
+    simple_serve::set_ensure_server(|ver,dir|{
+        // install
+        Ok(())
+    });
     // if autoupdate { simple_serve::enable_auto_update(); }
 
     // // 显示加载窗口

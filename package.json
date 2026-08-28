@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "sh -c \"cargo tauri dev\"",
-    "build": "sh -c \"(cd src-tauri && cargo tauri build) && mv src-tauri/target/release/dsh.exe target/dsh.exe \""
+    "build": "sh -c \"(cd src-tauri && cargo tauri build) && (mv src-tauri/target/release/dsh.exe target/) && (mv src-tauri/target/release/bundle/nsis/*setup.exe target/) \""
   },
   "keywords": [],
   "author": "",
