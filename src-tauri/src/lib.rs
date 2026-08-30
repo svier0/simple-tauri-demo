@@ -34,59 +34,35 @@ fn show_load_tips(s: &str){
 }
 
 #[cfg(windows)]
-fn run_script_install(){
-    sh2rs!("echo {} >  install.bat",
-        try_quote!("@echo off")).ok();
-    sh2rs!("echo {} >> install.bat",
-        try_quote!("set PATH=\"%~dp0/../nodejs;%~dp0/../nodejs/bin;%PATH%\"")).ok();
-    sh2rs!("echo {} >> install.bat",
-        try_quote!("pnpm install @deepseek-ai/dsh")).ok();
-    sh2rs!("echo {} >> install.bat",
-        try_quote!("pnpm approve-builds -all")).ok();
-    sh2rs!("echo {} >> install.bat",
-        try_quote!("echo {} >  start.cmd",
-        try_quote!("@echo off"))).ok();
-    sh2rs!("echo {} >> install.bat",
-        try_quote!("echo {} >> start.cmd",
-        try_quote!("set DSH_HOME=\"%~dp0.dsh\""))).ok();
-    sh2rs!("echo {} >> install.bat",
-        try_quote!("echo {} >> start.cmd",
-        try_quote!("./node_modules/.bin/dsh.CMD web --no-open --port 34333 --trusted-host 127.0.0.1"))).ok();
-    sh2rs!("sh ./install.bat").ok();
-    sh2rs!("rm ./install.bat").ok();
+fn run_script_install() -> Result<(),String> {
+    let cmd = simple_tauri::utils::get_node_cmd(&format!("{}\n{}"
+            ,"call pnpm install @deepseek-ai/dsh"
+            ,"call pnpm approve-builds -all"
+        ),"");
+    sh2rs!("sh {}",try_quote!("{}",cmd))?;
+    let cmd = simple_tauri::utils::get_node_cmd(&format!("{}\n{}"
+            ,"set DSH_HOME=\"%~dp0.dsh\""
+            ,"./node_modules/.bin/dsh.CMD web --no-open --port 34333 --trusted-host 127.0.0.1"
+        ),"");
+    sh2rs!("echo {} > start.cmd",try_quote!("{}", cmd)).ok();
+    Ok(())
 }
 
 #[cfg(not(windows))]
-fn run_script_install(){
-    sh2rs!("echo {} >  install.sh",
-        try_quote!("#!/bin/bash")).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("PNPM_HOME=$(pwd)/pnpm")).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("PNPM_BIN=$PNPM_HOME/pnpm.exe")).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("export PATH=\"$PNPM_HOME/bin:$(pwd)/node.exe:$PATH\"")).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("pnpm install @deepseek-ai/dsh || true")).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("pnpm approve-builds -all")).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("echo {} >  start.sh",
-        try_quote!("#!/bin/bash"))).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("echo {} >> start.sh",
-            try_quote!("export DSH_HOME=\"$(cd {} && pwd)/.dsh\"",
-                try_quote!("$(dirname \"${{BASH_SOURCE[0]}}\")")))).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("echo {} >> start.sh",
-            try_quote!("export PATH=\"./node_modules/.bin:$PATH\""))).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("echo {} >> start.sh",
-            try_quote!("dsh web --no-open --port 34333 --trusted-host 127.0.0.1"))).ok();
-    sh2rs!("echo {} >> install.sh",
-        try_quote!("chmod 755 ./start.sh")).ok();
-    sh2rs!("sh ./install.sh").ok();
-    sh2rs!("rm ./install.sh").ok();
+fn run_script_install() -> Result<(),String> {
+    let cmd = simple_tauri::utils::get_node_cmd(&format!("{}\n{}"
+            ,"pnpm install @deepseek-ai/dsh || true"
+            ,"pnpm approve-builds -all"
+        ),"");
+    sh2rs!("sh {}",try_quote!("{}",cmd))?;
+    let cmd = simple_tauri::utils::get_node_cmd(&format!("{}\n{}\n{}"
+            ,"export DSH_HOME=\"$(cd \"$(dirname \"${{BASH_SOURCE[0]}}\")\" && pwd)/.dsh\""
+            ,"export PATH=\"./node_modules/.bin:$PATH\"\""
+            ,"dsh web --no-open --port 34333 --trusted-host 127.0.0.1"
+        ),"");
+    sh2rs!("echo {} > start.sh",try_quote!("{}", cmd)).ok();
+    sh2rs!("chmod 755 ./start.sh").ok();
+    Ok(())
 }
 
 // 托盘创建前回调
@@ -106,10 +82,12 @@ fn on_tray_before() -> Result<(), String> {
     simple_serve::set_start_cmd!("start.sh");//DSH_HOME=%USERPROFILE%\.dsh ;../node node_modules/@deepseek-ai/dsh/lib/bin.js web
     simple_serve::set_ensure_server(|_ver,dir|{
         sh2rs!("cd {}",dir).ok();
-        show_load_tips("安装Node");
+        show_load_tips("安装node");
         simple_tauri::utils::ensure_node("","")?;
-        run_script_install();
-        // install
+        show_load_tips("安装pnpm");
+        simple_tauri::utils::ensure_pnpm("","")?;
+        show_load_tips("安装dsh");
+        run_script_install()?;
         Ok(())
     });
     if autoupdate { simple_serve::enable_auto_update(); }
