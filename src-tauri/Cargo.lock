@@ -917,6 +917,7 @@ dependencies = [
 name = "dsh"
 version = "0.1.0"
 dependencies = [
+ "indoc",
  "serde",
  "serde_json",
  "simple-tauri",
