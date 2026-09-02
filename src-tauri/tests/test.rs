@@ -27,7 +27,7 @@ fn test_script_install() -> Result<(),String> {
     let port = 34333;
     let server_home = "";
     simple_serve::set_pkg("npm","@deepseek-ai/dsh");
-    simple_serve::set_ensure_server(|_ver,dir|{
+    simple_serve::set_ensure_server(move |_ver,dir|{
         sh2rs!("mkdir -p {}",dir).ok();
         sh2rs!("cd {}",dir).ok();
         // show_load_tips("安装node");
@@ -38,6 +38,7 @@ fn test_script_install() -> Result<(),String> {
         run_script_install(port,server_home)?;
         Ok(())
     });
+    eprintln!("{}",port );
 
     let _ = simple_serve::check_update(false)?;
     Ok(())

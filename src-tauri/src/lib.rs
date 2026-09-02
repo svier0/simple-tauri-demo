@@ -78,34 +78,34 @@ fn on_tray_before() -> Result<(), String> {
     sh2rs!("sleep 1").ok();
     // 设置参数
     let autoupdate = false;
-    let _port = 34333;
-    let _server_home = "";
+    let port = 34333;
+    let server_home = "";
 
-    // //
-    // simple_serve::set_pkg("npm","@deepseek-ai/dsh");
-    // simple_serve::set_ensure_server(|_ver,dir|{
-    //     sh2rs!("mkdir -p {}",dir).ok();
-    //     sh2rs!("cd {}",dir).ok();
-    //     show_load_tips("安装node");
-    //     simple_tauri::utils::ensure_node("","")?;
-    //     show_load_tips("安装pnpm");
-    //     simple_tauri::utils::ensure_pnpm("","")?;
-    //     show_load_tips("安装dsh");
-    //     run_script_install(port,server_home)?;
-    //     Ok(())
-    // });
+    //
+    simple_serve::set_pkg("npm","@deepseek-ai/dsh");
+    simple_serve::set_ensure_server(move |_ver,dir|{
+        sh2rs!("mkdir -p {}",dir).ok();
+        sh2rs!("cd {}",dir).ok();
+        show_load_tips("安装node");
+        simple_tauri::utils::ensure_node("","")?;
+        show_load_tips("安装pnpm");
+        simple_tauri::utils::ensure_pnpm("","")?;
+        show_load_tips("安装dsh");
+        run_script_install(port,server_home)?;
+        Ok(())
+    });
     if autoupdate { simple_serve::enable_auto_update(); }
 
-    // // 检查版本更新
-    // show_load_tips("检测本地服务版本");
-    // let _ = simple_serve::check_update(false)?;
-    // // 启动服务
-    // show_load_tips("服务启动中");
-    // simple_serve::start()
-    //     .map_err(|e| format!("服务器启动失败: {e}"))?;
-    // // 检测端口拉起成功才返回继续走托盘创建逻辑
-    // simple_serve::wait_port(port)
-    //     .map_err(|e| format!("服务器启动超时: {e}"))?;
+    // 检查版本更新
+    show_load_tips("检测本地服务版本");
+    let _ = simple_serve::check_update(false)?;
+    // 启动服务
+    show_load_tips("服务启动中");
+    simple_serve::start()
+        .map_err(|e| format!("服务器启动失败: {e}"))?;
+    // 检测端口拉起成功才返回继续走托盘创建逻辑
+    simple_serve::wait_port(port)
+        .map_err(|e| format!("服务器启动超时: {e}"))?;
 
     // 关闭加载窗口
     simple_tray::close_window("load");
