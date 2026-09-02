@@ -1,6 +1,6 @@
 [package]
 name = "dsh"
-version = "0.1.0"
+version = "0.2.0"
 description = "dsh"
 authors = ["心衍"]
 edition = "2021"
@@ -13,8 +13,8 @@ crate-type = ["rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-# simple-tauri = "0.2"
-simple-tauri = { path = "../../simple-tauri/" }
+simple-tauri = "0.3"
+# simple-tauri = { path = "../../simple-tauri/" }
 tauri = { version = "2", features = ["tray-icon"] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }

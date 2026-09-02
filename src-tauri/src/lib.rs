@@ -27,7 +27,7 @@ pub fn run() {
             ["light"],
         ]"#);
     simple_tray::hooks!(on_tray_before, _, on_quit);
-    // simple_tray::run!();
+    simple_tray::run!();
 }
 
 fn show_load_tips(s: &str){
@@ -48,6 +48,7 @@ fn run_script_install(port: i32,server_home: &str) -> Result<(),String> {
             dsh web --no-open --port {} --trusted-host 127.0.0.1
         "#},server_home,port),"");
     sh2rs!("echo {} > start.cmd",try_quote!("{}", cmd)).ok();
+    // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.bat");
     Ok(())
 }
@@ -67,6 +68,7 @@ fn run_script_install(port: i32,server_home: &str) -> Result<(),String> {
         "#},server_home,port),"");
     sh2rs!("echo {} > start.sh",try_quote!("{}", cmd)).ok();
     sh2rs!("chmod 755 ./start.sh").ok();
+    // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.sh");
     Ok(())
 }
@@ -81,8 +83,9 @@ fn on_tray_before() -> Result<(), String> {
     let port = 34333;
     let server_home = "";
 
-    //
+    // 包类型/包名 用于检测服务版本号
     simple_serve::set_pkg("npm","@deepseek-ai/dsh");
+    // 需要更新服务端时的回调
     simple_serve::set_ensure_server(move |_ver,dir|{
         sh2rs!("mkdir -p {}",dir).ok();
         sh2rs!("cd {}",dir).ok();
@@ -103,9 +106,13 @@ fn on_tray_before() -> Result<(), String> {
     show_load_tips("服务启动中");
     simple_serve::start()
         .map_err(|e| format!("服务器启动失败: {e}"))?;
+    show_load_tips("服务启动中 50%");
+    sh2rs!("sleep 1").ok();
     // 检测端口拉起成功才返回继续走托盘创建逻辑
     simple_serve::wait_port(port)
         .map_err(|e| format!("服务器启动超时: {e}"))?;
+    show_load_tips("服务启动中 100%");
+    sh2rs!("sleep 1").ok();
 
     // 关闭加载窗口
     simple_tray::close_window("load");
