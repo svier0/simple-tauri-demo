@@ -915,7 +915,7 @@ dependencies = [
 
 [[package]]
 name = "dsh"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "indoc",
  "serde",
@@ -3466,6 +3466,8 @@ checksum = "3a219298ac11a56ea9a6d2120044824d6f01aeb034955e7af7bc16858527deea"
 [[package]]
 name = "simple-tauri"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c2be7cef3fdc47311f69e61ce062ed6692338fb62d64995ab9509ac24f67584"
 dependencies = [
  "indoc",
  "native-tls",
@@ -3485,6 +3487,8 @@ dependencies = [
 [[package]]
 name = "simple-tauri-macros"
 version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d5e6e39c2ee7fb4e075294e1563428ac543c1a2b95e7194282baf99dcb2bf6b4"
 dependencies = [
  "proc-macro2",
  "quote",
