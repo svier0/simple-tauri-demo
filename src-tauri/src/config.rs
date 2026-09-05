@@ -25,8 +25,21 @@ const PATH: &str = "data/config.json";
 pub fn init(){
 	config::set_default(DEFAULT);
 	config::load(PATH).expect("");
-    if config::get_str("dsh_home").unwrap_or_default().is_empty() {
-        let dsh_home = "~/.dsh";
+    if config::get_or!("dsh_home","".to_string()).is_empty() {
+        let dsh_home = std::env::var_os("DSH_HOME")
+        	.or_else(||{
+        		let user_home: std::path::PathBuf = std::env::var_os("USERPROFILE")
+				    .or_else(|| std::env::var_os("HOME"))
+				    .map(std::path::PathBuf::from)
+				    .unwrap_or_else(|| simple_tauri::simple_tray::resource_dir(""));
+        		Some(user_home.join(".dsh").into_os_string())
+        	})
+        	.map(|s| s.to_string_lossy().to_string())
+		    .unwrap_or_default();
         let _ = config::set("dsh_home",dsh_home);
     }
+}
+
+pub fn get_port() -> i64 {
+    config::get_or!("port",3080)
 }

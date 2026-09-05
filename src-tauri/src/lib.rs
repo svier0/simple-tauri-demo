@@ -5,19 +5,22 @@ use simple_tauri::utils::sh2rs::try_quote;
 use indoc::indoc;
 
 mod ipc;
+mod config;
 
 #[cfg(windows)]
 pub fn run() {
     // 互斥 只能启动一个实例
     simple_tray::mutex!();
+    // 初始化配置文件
+    config::init();
     // 设置ipc函数 自动扫描设定的模块
     simple_tray::set_ipc_cmds![ipc];
     // 窗口列表 [id 标题 url 宽 高 有边框]
-    simple_tray::set_window_list!(r#"[
-            ["main", "", "http://127.0.0.1:3080", 1280.0, 800.0],
+    simple_tray::set_window_list!(format!(indoc! {r#"[
+            ["main", "", "http://127.0.0.1:{}", 1280.0, 800.0],
             ["setting", "设置","",null,null,false],
             ["load", "Loading","",380,280,false],
-        ]"#);
+        ]"#},"3080"));
     // 托盘菜单
     simple_tray::set_tray_menu!(r#"[
             ["show", "显示主界面"],
@@ -35,7 +38,7 @@ fn show_load_tips(s: &str){
 }
 
 #[cfg(windows)]
-fn run_script_install(port: i32,server_home: &str) -> Result<(),String> {
+fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
     sh2rs!("echo \"{{}}\" > package.json").ok();
     let cmd = simple_tauri::utils::get_node_cmd(&format!(indoc! {r#"
             call pnpm install @deepseek-ai/dsh
@@ -54,7 +57,7 @@ fn run_script_install(port: i32,server_home: &str) -> Result<(),String> {
 }
 
 #[cfg(not(windows))]
-fn run_script_install(port: i32,server_home: &str) -> Result<(),String> {
+fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
     sh2rs!("echo \"{{}}\" > package.json").ok();
     let cmd = simple_tauri::utils::get_node_cmd(&format!(indoc! {r#"
             pnpm install @deepseek-ai/dsh
@@ -80,8 +83,8 @@ fn on_tray_before() -> Result<(), String> {
     sh2rs!("sleep 1").ok();
     // 设置参数
     let autoupdate = false;
-    let port = 34333;
-    let server_home = "";
+    let port = simple_tauri::config::get_i64("port").unwrap_or_else(||3080);
+    let server_home = simple_tauri::config::get_str("server_home").unwrap_or_default();
 
     // 包类型/包名 用于检测服务版本号
     simple_serve::set_pkg("npm","@deepseek-ai/dsh");
@@ -94,7 +97,7 @@ fn on_tray_before() -> Result<(), String> {
         show_load_tips("安装pnpm");
         simple_tauri::utils::ensure_pnpm("","")?;
         show_load_tips("安装dsh");
-        run_script_install(port,server_home)?;
+        run_script_install(port,&server_home)?;
         Ok(())
     });
     if autoupdate { simple_serve::enable_auto_update(); }
