@@ -10,7 +10,7 @@ mod config;
 #[cfg(windows)]
 pub fn run() {
     // 互斥 只能启动一个实例
-    simple_tray::mutex!();
+    simple_tauri::mutex!();
     // 初始化配置文件
     config::init();
     // 设置ipc函数 自动扫描设定的模块
@@ -20,7 +20,7 @@ pub fn run() {
             ["main", "", "http://127.0.0.1:{}", 1280.0, 800.0],
             ["setting", "设置","",null,null,false],
             ["load", "Loading","",380,280,false],
-        ]"#},"3080"));
+        ]"#},config::get_or!("port",3080)));
     // 托盘菜单
     simple_tray::set_tray_menu!(r#"[
             ["show", "显示主界面"],
@@ -34,6 +34,8 @@ pub fn run() {
 }
 
 fn show_load_tips(s: &str){
+    let silent_launch = config::get_or!("silent_launch",false);
+    if silent_launch { return; }
     simple_tray::runjs("load", &format!("document.querySelector('p.tips').innerHTML='{}'",s));
 }
 
@@ -78,13 +80,12 @@ fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
 
 // 托盘创建前回调
 fn on_tray_before() -> Result<(), String> {
-    // 显示加载窗口
-    simple_tray::show_window("load");
-    sh2rs!("sleep 1").ok();
     // 设置参数
-    let autoupdate = false;
-    let port = simple_tauri::config::get_i64("port").unwrap_or_else(||3080);
-    let server_home = simple_tauri::config::get_str("server_home").unwrap_or_default();
+    let auto_run = config::get_or!("auto_run",false);
+    let silent_launch = config::get_or!("silent_launch",false);
+    let auto_update = config::get_or!("auto_update",false);
+    let port = config::get_or!("port",3080);
+    let server_home = config::get_or!("server_home","");
 
     // 包类型/包名 用于检测服务版本号
     simple_serve::set_pkg("npm","@deepseek-ai/dsh");
@@ -100,27 +101,38 @@ fn on_tray_before() -> Result<(), String> {
         run_script_install(port,&server_home)?;
         Ok(())
     });
-    if autoupdate { simple_serve::enable_auto_update(); }
+    if auto_update { simple_serve::enable_auto_update(); }
+
+    if !silent_launch {
+        // 显示加载窗口
+        simple_tray::show_window("load");
+        sh2rs!("sleep 1").ok();
+    }
 
     // 检查版本更新
     show_load_tips("检测本地服务版本");
-    let _ = simple_serve::check_update(false)?;
-    // 启动服务
-    show_load_tips("服务启动中");
-    simple_serve::start()
-        .map_err(|e| format!("服务器启动失败: {e}"))?;
-    show_load_tips("服务启动中 50%");
-    sh2rs!("sleep 1").ok();
-    // 检测端口拉起成功才返回继续走托盘创建逻辑
-    simple_serve::wait_port(port)
-        .map_err(|e| format!("服务器启动超时: {e}"))?;
-    show_load_tips("服务启动中 100%");
-    sh2rs!("sleep 1").ok();
+    let _ = simple_serve::check_update(auto_update)?;
 
-    // 关闭加载窗口
-    simple_tray::close_window("load");
-    // 显示主窗口
-    simple_tray::show_window("main");
+    if auto_run {
+        // 启动服务
+        show_load_tips("服务启动中");
+        simple_serve::start()
+            .map_err(|e| format!("服务器启动失败: {e}"))?;
+        show_load_tips("服务启动中 50%");
+        sh2rs!("sleep 1").ok();
+        // 检测端口拉起成功才返回继续走托盘创建逻辑
+        simple_serve::wait_port(port)
+            .map_err(|e| format!("服务器启动超时: {e}"))?;
+        show_load_tips("服务启动中 100%");
+        sh2rs!("sleep 1").ok();
+    }
+
+    if !silent_launch {
+        // 关闭加载窗口
+        simple_tray::close_window("load");
+        // 显示主窗口
+        simple_tray::show_window("main");
+    }
     Ok(())
 }
 

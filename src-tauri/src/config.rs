@@ -1,5 +1,6 @@
 
 use simple_tauri::config;
+pub use simple_tauri::config::get_or;
 
 /// 默认配置（JSONC）
 const DEFAULT: &str = r#"
@@ -7,7 +8,7 @@ const DEFAULT: &str = r#"
 	// 开机自启
     "auto_start": false,
     // 自动运行
-    "auto_run": false,
+    "auto_run": true,
     // 静默启动
     "silent_launch": false,
     // 自动更新
@@ -38,8 +39,4 @@ pub fn init(){
 		    .unwrap_or_default();
         let _ = config::set("dsh_home",dsh_home);
     }
-}
-
-pub fn get_port() -> i64 {
-    config::get_or!("port",3080)
 }
