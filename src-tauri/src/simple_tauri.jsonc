@@ -1,0 +1,28 @@
+{
+    // 互斥 只能启动一个实例
+    "mutex": true,
+    // 设置ipc函数 自动扫描设定的模块
+    "ipc_cmds":[
+    	"ipc",
+    ],
+    // 窗口列表 [id 标题 url 宽 高 有边框]
+    "window_list":[
+        ["main", "", "{{config::main_window_url()}}", 1280.0, 800.0],
+        ["setting", "设置","",null,null,false],
+        ["load", "Loading","",380,280,false],
+    ],
+    // 托盘菜单
+    "tray_menu":[
+        ["show", "显示主界面"],
+        ["toggle"],
+        ["show-setting", "设置", "@show_setting"],
+        [],
+        ["light"],
+    ],
+    "hooks":{
+        "on_tauri_before":"@config::init",
+        "on_tray_before":"@init::on_tray_before",
+        "on_tray_after":"_",
+        "on_quit":"@on_quit",
+    }
+}

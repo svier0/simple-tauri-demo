@@ -40,3 +40,7 @@ pub fn init(){
         let _ = config::set("dsh_home",dsh_home);
     }
 }
+
+pub fn main_window_url() -> String {
+    format!("http://127.0.0.1:{}",config::get_or!("port",3080))
+}
