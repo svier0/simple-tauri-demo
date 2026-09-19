@@ -59,8 +59,6 @@ pub fn on_tray_before() -> Result<(), String> {
     let port = config::get_or!("port",3080);
     let server_home = config::get_or!("server_home","");
 
-    // 包类型/包名 用于检测服务版本号
-    simple_serve::set_pkg("npm","@deepseek-ai/dsh");
     // 需要更新服务端时的回调
     simple_serve::set_ensure_server(move |_ver,dir|{
         sh2rs!("mkdir -p {}",dir).ok();

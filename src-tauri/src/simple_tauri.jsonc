@@ -28,6 +28,7 @@
     },
     // 服务
     "server":{
+        // 包类型/包名 用于检测服务版本号
         "package":{
             "type":"npm",
             "name": "@deepseek-ai/dsh",
