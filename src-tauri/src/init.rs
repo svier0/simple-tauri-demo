@@ -58,12 +58,6 @@ pub fn on_tray_before() -> Result<(), String> {
         sh2rs!("sleep 1").ok();
     }
 
-    // 安装环境依赖
-    show_load_tips("安装node");
-    simple_tauri::utils::ensure_node("","")?;
-    show_load_tips("安装pnpm");
-    simple_tauri::utils::ensure_pnpm("")?;
-
     // 需要更新服务端时的回调
     simple_serve::set_ensure_server(move |ver,dir|{
         sh2rs!("mkdir -p {}",dir).ok();

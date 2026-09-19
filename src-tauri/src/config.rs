@@ -41,7 +41,7 @@ pub fn init(){
     }
 }
 
-pub fn port() -> i32 {
+pub fn port() -> i64 {
     config::get_or!("port",3080)
 }
 
