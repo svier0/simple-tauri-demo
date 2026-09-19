@@ -16,6 +16,7 @@
         ["show", "显示主界面"],
         ["toggle"],
         ["show-setting", "设置", "@show_setting"],
+        ["show-cmd", "打开命令行", "@show_cmd"],
         [],
         ["light"],
     ],
