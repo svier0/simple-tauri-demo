@@ -41,6 +41,10 @@ pub fn init(){
     }
 }
 
+pub fn port() -> i32 {
+    config::get_or!("port",3080)
+}
+
 pub fn main_window_url() -> String {
-    format!("http://127.0.0.1:{}",config::get_or!("port",3080))
+    format!("http://127.0.0.1:{}",port())
 }

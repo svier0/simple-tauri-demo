@@ -1,7 +1,6 @@
 use simple_tauri::simple_tray;
 use simple_tauri::simple_serve;
 use simple_tauri::utils::sh2rs::sh2rs;
-use simple_tauri::utils::sh2rs::try_quote;
 use indoc::indoc;
 use super::config;
 
@@ -13,18 +12,16 @@ fn show_load_tips(s: &str){
 
 #[cfg(windows)]
 fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
-    sh2rs!("echo \"{{}}\" > package.json").ok();
-    let cmd = simple_tauri::utils::get_node_cmd(&format!(indoc! {r#"
+    simple_tauri::utils::run_env_cmd(&indoc! {r#"
+            echo "{}" > package.json
             call pnpm install @deepseek-ai/dsh
             call pnpm approve-builds -all
-        "#}),"");
-    sh2rs!("sh {}",try_quote!("{}",cmd))?;
-    let cmd = simple_tauri::utils::get_node_cmd(&format!(indoc! {r#"
+        "#})?;
+    simple_tauri::utils::write_env_script(&format!(indoc! {r#"
             set "DSH_HOME={}"
             set "PATH=%DSH_HOME%/node_modules/.bin;%PATH%"
             dsh web --no-open --port {} --trusted-host 127.0.0.1
-        "#},server_home,port),"");
-    sh2rs!("echo {} > start.cmd",try_quote!("{}", cmd)).ok();
+        "#},server_home,port),"start.bat").ok();
     // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.bat");
     Ok(())
@@ -32,19 +29,16 @@ fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
 
 #[cfg(not(windows))]
 fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
-    sh2rs!("echo \"{{}}\" > package.json").ok();
-    let cmd = simple_tauri::utils::get_node_cmd(&format!(indoc! {r#"
+    simple_tauri::utils::run_env_cmd(&indoc! {r#"
+            echo "{}" > package.json
             pnpm install @deepseek-ai/dsh
             pnpm approve-builds -all
-        "#}),"");
-    sh2rs!("sh {}",try_quote!("{}",cmd))?;
-    let cmd = simple_tauri::utils::get_node_cmd(&format!(indoc! {r#"
+        "#})?;
+    simple_tauri::utils::write_env_script(&format!(indoc! {r#"
             export DSH_HOME="{}"
             export PATH="$DSH_HOME/node_modules/.bin:$PATH"
             dsh web --no-open --port {} --trusted-host 127.0.0.1
-        "#},server_home,port),"");
-    sh2rs!("echo {} > start.sh",try_quote!("{}", cmd)).ok();
-    sh2rs!("sh chmod 755 ./start.sh").ok();
+        "#},server_home,port),"start.sh").ok();
     // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.sh");
     Ok(())
@@ -52,36 +46,37 @@ fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
 
 // 托盘创建前回调
 pub fn on_tray_before() -> Result<(), String> {
-    // 设置参数
-    let auto_run = config::get_or!("auto_run",false);
+    // 读取配置
     let silent_launch = config::get_or!("silent_launch",false);
-    let auto_update = config::get_or!("auto_update",false);
-    let port = config::get_or!("port",3080);
-    let server_home = config::get_or!("server_home","");
+    let auto_run      = config::get_or!("auto_run",false);
+    let server_home   = config::get_or!("server_home","");
+    let port          = config::port();
 
-    // 需要更新服务端时的回调
-    simple_serve::set_ensure_server(move |_ver,dir|{
-        sh2rs!("mkdir -p {}",dir).ok();
-        sh2rs!("cd {}",dir).ok();
-        show_load_tips("安装node");
-        simple_tauri::utils::ensure_node("","")?;
-        show_load_tips("安装pnpm");
-        simple_tauri::utils::ensure_pnpm("","")?;
-        show_load_tips("安装dsh");
-        run_script_install(port,&server_home)?;
-        Ok(())
-    });
-    if auto_update { simple_serve::enable_auto_update(); }
-
+    // 显示加载窗口
     if !silent_launch {
-        // 显示加载窗口
         simple_tray::show_window("load");
         sh2rs!("sleep 1").ok();
     }
 
+    // 安装环境依赖
+    show_load_tips("安装node");
+    simple_tauri::utils::ensure_node("","")?;
+    show_load_tips("安装pnpm");
+    simple_tauri::utils::ensure_pnpm("")?;
+
+    // 需要更新服务端时的回调
+    simple_serve::set_ensure_server(move |ver,dir|{
+        sh2rs!("mkdir -p {}",dir).ok();
+        sh2rs!("cd {}",dir).ok();
+        show_load_tips("安装dsh");
+        run_script_install(port,&server_home)?;
+        sh2rs!("echo {} > {}",ver,"version.txt").ok();
+        Ok(())
+    });
+
     // 检查版本更新
     show_load_tips("检测本地服务版本");
-    let _ = simple_serve::check_update(auto_update)?;
+    simple_serve::auto_check_update()?;
 
     if auto_run {
         // 启动服务

@@ -33,6 +33,7 @@
             "type":"npm",
             "name": "@deepseek-ai/dsh",
         },
+        // 依赖环境
         "deps":[
             "node",
             "pnpm",
