@@ -3,6 +3,7 @@ use simple_tauri::simple_serve;
 use simple_tauri::utils::sh2rs::sh2rs;
 use simple_tauri::utils::sh2rs::try_quote;
 use indoc::indoc;
+use super::config;
 
 fn show_load_tips(s: &str){
     let silent_launch = config::get_or!("silent_launch",false);
@@ -43,7 +44,7 @@ fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
             dsh web --no-open --port {} --trusted-host 127.0.0.1
         "#},server_home,port),"");
     sh2rs!("echo {} > start.sh",try_quote!("{}", cmd)).ok();
-    sh2rs!("chmod 755 ./start.sh").ok();
+    sh2rs!("sh chmod 755 ./start.sh").ok();
     // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.sh");
     Ok(())

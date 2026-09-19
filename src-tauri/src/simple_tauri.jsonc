@@ -7,7 +7,7 @@
     ],
     // 窗口列表 [id 标题 url 宽 高 有边框]
     "window_list":[
-        ["main", "", "{{config::main_window_url()}}", 1280.0, 800.0],
+        ["main", "", "rust:config::main_window_url()", 1280.0, 800.0],
         ["setting", "设置","",null,null,false],
         ["load", "Loading","",380,280,false],
     ],
@@ -19,10 +19,22 @@
         [],
         ["light"],
     ],
+    // HOOK方法
     "hooks":{
         "on_tauri_before":"@config::init",
         "on_tray_before":"@init::on_tray_before",
         "on_tray_after":"_",
         "on_quit":"@on_quit",
-    }
+    },
+    // 服务
+    "server":{
+        "package":{
+            "type":"npm",
+            "name": "@deepseek-ai/dsh",
+        },
+        "deps":[
+            "node",
+            "pnpm",
+        ],
+    },
 }
