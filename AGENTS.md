@@ -18,7 +18,8 @@
 - set_ipc_cmds! 支持 pub use 语句(提交 `6002f62`)
 - config::get 改为2参数: `get(key, default)`
 - `get_or!` 宏:字符串字面量 → `String`;变量 `&str` → `&str`;添加 `.to_owned()`(提交 `1634cb2`)
-- demo 提交 `1a6c928`: docs: add AGENTS.md
+- demo AGENTS.md 提交 3dff1c6
+- demo lib.rs 提交 c1954a9: 移除手动 ensure_node/pnpm 调用
 - 回答用户: `set_window_list!` 是过程宏，`format!` 返回运行时 `String`，无法作为过程宏输入
 - 库和 demo 均已推送到 origin
 - **Tauri IPC 问答**:后端返回 `serde_json::Value` → 前端 `invoke()` 自动反序列化为 JS 对象，无需手动 `JSON.parse`
