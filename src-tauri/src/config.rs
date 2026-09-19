@@ -25,7 +25,7 @@ const PATH: &str = "data/config.json";
 /// 初始化配置文件
 pub fn init(){
 	config::set_default(DEFAULT);
-	config::load(PATH).expect("");
+	config::load(PATH).ok();
     if config::get_or!("dsh_home","".to_string()).is_empty() {
         let dsh_home = std::env::var_os("DSH_HOME")
         	.or_else(||{
