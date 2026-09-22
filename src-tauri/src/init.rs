@@ -13,15 +13,15 @@ fn show_load_tips(s: &str){
 #[cfg(windows)]
 fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
     simple_tauri::utils::run_env_cmd(&indoc! {r#"
-            echo "{}" > package.json
+            call pnpm init
             call pnpm install @deepseek-ai/dsh
             call pnpm approve-builds -all
-        "#})?;
+        "#}).ok();
     simple_tauri::utils::write_env_script(&format!(indoc! {r#"
             set "DSH_HOME={}"
             set "PATH=%DSH_HOME%/node_modules/.bin;%PATH%"
             dsh web --no-open --port {} --trusted-host 127.0.0.1
-        "#},server_home,port),"start.bat").ok();
+        "#},server_home,port),"start.bat")?;
     // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.bat");
     Ok(())
@@ -30,15 +30,15 @@ fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
 #[cfg(not(windows))]
 fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
     simple_tauri::utils::run_env_cmd(&indoc! {r#"
-            echo "{}" > package.json
+            pnpm init
             pnpm install @deepseek-ai/dsh
             pnpm approve-builds -all
-        "#})?;
+        "#}).ok();
     simple_tauri::utils::write_env_script(&format!(indoc! {r#"
             export DSH_HOME="{}"
             export PATH="$DSH_HOME/node_modules/.bin:$PATH"
             dsh web --no-open --port {} --trusted-host 127.0.0.1
-        "#},server_home,port),"start.sh").ok();
+        "#},server_home,port),"start.sh")?;
     // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.sh");
     Ok(())
@@ -69,7 +69,7 @@ pub fn on_tray_before() -> Result<(), String> {
     });
 
     // 检查版本更新
-    show_load_tips("检测本地服务版本");
+    show_load_tips("检测运行环境");
     simple_serve::auto_check_update()?;
 
     if auto_run {
