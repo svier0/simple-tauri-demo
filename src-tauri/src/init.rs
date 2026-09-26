@@ -11,7 +11,7 @@ fn show_load_tips(s: &str){
 }
 
 #[cfg(windows)]
-fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
+fn run_script_install(port: i64,server_home: &str,dir: &str) -> Result<(),String> {
     simple_tauri::utils::run_env_cmd(&indoc! {r#"
             call pnpm init
             call pnpm install @deepseek-ai/dsh
@@ -19,16 +19,16 @@ fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
         "#}).ok();
     simple_tauri::utils::write_env_script(&format!(indoc! {r#"
             set "DSH_HOME={}"
-            set "PATH=%DSH_HOME%/node_modules/.bin;%PATH%"
+            set "PATH={}/node_modules/.bin;%PATH%"
             dsh web --no-open --port {} --trusted-host 127.0.0.1
-        "#},server_home,port),"start.bat")?;
+        "#},server_home,dir,port),"start.bat")?;
     // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.bat");
     Ok(())
 }
 
 #[cfg(not(windows))]
-fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
+fn run_script_install(port: i64,server_home: &str,dir: &str) -> Result<(),String> {
     simple_tauri::utils::run_env_cmd(&indoc! {r#"
             pnpm init
             pnpm install @deepseek-ai/dsh
@@ -36,9 +36,9 @@ fn run_script_install(port: i64,server_home: &str) -> Result<(),String> {
         "#}).ok();
     simple_tauri::utils::write_env_script(&format!(indoc! {r#"
             export DSH_HOME="{}"
-            export PATH="$DSH_HOME/node_modules/.bin:$PATH"
+            export PATH="{}/node_modules/.bin:$PATH"
             dsh web --no-open --port {} --trusted-host 127.0.0.1
-        "#},server_home,port),"start.sh")?;
+        "#},server_home,dir,port),"start.sh")?;
     // 启动服务时执行的命令
     simple_serve::set_start_cmd!("start.sh");
     Ok(())
@@ -63,7 +63,7 @@ pub fn on_tray_before() -> Result<(), String> {
         sh2rs!("mkdir -p {}",dir).ok();
         sh2rs!("cd {}",dir).ok();
         show_load_tips("安装dsh");
-        run_script_install(port,&server_home)?;
+        run_script_install(port,&server_home,&dir)?;
         sh2rs!("echo {} > {}",ver,"version.txt").ok();
         Ok(())
     });
