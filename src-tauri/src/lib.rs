@@ -24,7 +24,7 @@ fn show_setting() {
 }
 
 fn show_cmd() {
-    let server_home   = config::get_or!("server_home","");
+    let dsh_home = config::get_or!("dsh_home","");
     #[cfg(windows)]
     simple_tauri::utils::show_env_cmd(&format!(indoc! {r#"
             set "DSH_HOME={}"
@@ -32,7 +32,7 @@ fn show_cmd() {
             cls
             cd ~
             dsh --help
-        "#},server_home));
+        "#},dsh_home));
     #[cfg(not(windows))]
     simple_tauri::utils::show_env_cmd(&format!(indoc! {r#"
             export DSH_HOME="{}"
@@ -40,5 +40,5 @@ fn show_cmd() {
             clear
             cd ~
             dsh --help
-        "#},server_home));
+        "#},dsh_home));
 }
