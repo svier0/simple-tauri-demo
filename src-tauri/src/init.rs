@@ -22,8 +22,6 @@ fn run_script_install(port: i64,server_home: &str,dir: &str) -> Result<(),String
             set "PATH={}/node_modules/.bin;%PATH%"
             dsh web --no-open --port {} --trusted-host 127.0.0.1
         "#},server_home,dir,port),"start.bat")?;
-    // 启动服务时执行的命令
-    simple_serve::set_start_cmd!("start.bat");
     Ok(())
 }
 
@@ -39,8 +37,6 @@ fn run_script_install(port: i64,server_home: &str,dir: &str) -> Result<(),String
             export PATH="{}/node_modules/.bin:$PATH"
             dsh web --no-open --port {} --trusted-host 127.0.0.1
         "#},server_home,dir,port),"start.sh")?;
-    // 启动服务时执行的命令
-    simple_serve::set_start_cmd!("start.sh");
     Ok(())
 }
 
@@ -57,6 +53,12 @@ pub fn on_tray_before() -> Result<(), String> {
         simple_tray::show_window("load");
         sh2rs!("sleep 1").ok();
     }
+
+    // 启动服务时执行的命令
+    #[cfg(windows)]
+    simple_serve::set_start_cmd!("start.bat");
+    #[cfg(not(windows))]
+    simple_serve::set_start_cmd!("start.sh");
 
     // 需要更新服务端时的回调
     simple_serve::set_ensure_server(move |ver,dir|{
