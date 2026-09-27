@@ -35,7 +35,7 @@ pub fn init(){
 				    .unwrap_or_else(|| simple_tauri::simple_tray::resource_dir(""));
         		Some(user_home.join(".dsh").into_os_string())
         	})
-        	.map(|s| s.to_string_lossy().to_string())
+        	.map(|s| s.to_string_lossy().replace("\\","/").to_string())
 		    .unwrap_or_default();
         let _ = config::set("dsh_home",dsh_home);
     }

@@ -19,6 +19,7 @@
         ["show-cmd", "打开命令行", "@show_cmd"],
         [],
         ["light"],
+        [],
     ],
     // HOOK方法
     "hooks":{
