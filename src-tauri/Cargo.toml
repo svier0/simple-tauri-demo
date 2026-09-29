@@ -1,5 +1,5 @@
 [package]
-name = "simple_tauri_demo"
+name = "dsh-tray"
 version = "0.2.0"
 description = "simple_tauri_demo"
 authors = ["心衍"]

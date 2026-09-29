@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "sh -c \"cargo tauri dev\"",
-    "build": "sh -c \"( if [[ ! -d target/server ]]; then mkdir target/server; fi && cd src-tauri && cargo tauri build) && (mv src-tauri/target/release/dsh.exe target/) && (mv src-tauri/target/release/bundle/nsis/*setup.exe target/) \""
+    "build": "sh -c \"( if [[ ! -d target/server ]]; then mkdir target/server; fi && cd src-tauri && cargo tauri build) && (mv src-tauri/target/release/*.exe target/) && (mv src-tauri/target/release/bundle/nsis/*setup.exe target/) \""
   },
   "keywords": [],
   "author": "",

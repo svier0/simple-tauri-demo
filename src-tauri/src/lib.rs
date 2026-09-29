@@ -32,7 +32,6 @@ fn show_cmd() {
             set "DSH_HOME={}"
             set "PATH={}/node_modules/.bin;%PATH%"
             cls
-            cd ~
             dsh --help
         "#},dsh_home,work_dir));
     #[cfg(not(windows))]
@@ -40,7 +39,6 @@ fn show_cmd() {
             export DSH_HOME="{}"
             export PATH="{}/node_modules/.bin:$PATH"
             clear
-            cd ~
             dsh --help
         "#},dsh_home,work_dir));
 }
