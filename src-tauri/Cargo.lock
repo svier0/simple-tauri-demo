@@ -920,20 +920,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dsh"
-version = "0.2.0"
-dependencies = [
- "indoc",
- "serde",
- "serde_json",
- "simple-tauri",
- "tauri",
- "tauri-build",
- "tauri-plugin-opener",
- "ureq",
-]
-
-[[package]]
 name = "dtoa"
 version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3628,6 +3614,20 @@ dependencies = [
  "quote",
  "serde_json",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "simple_tauri_demo"
+version = "0.2.0"
+dependencies = [
+ "indoc",
+ "serde",
+ "serde_json",
+ "simple-tauri",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-opener",
+ "ureq",
 ]
 
 [[package]]

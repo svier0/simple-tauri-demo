@@ -1,12 +1,12 @@
 [package]
-name = "dsh"
+name = "simple_tauri_demo"
 version = "0.2.0"
-description = "dsh"
+description = "simple_tauri_demo"
 authors = ["心衍"]
 edition = "2021"
 
 [lib]
-name = "dsh_lib"
+name = "simple_tauri_demo_lib"
 crate-type = ["rlib"]
 
 [build-dependencies]

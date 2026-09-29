@@ -25,20 +25,22 @@ fn show_setting() {
 
 fn show_cmd() {
     let dsh_home = config::get_or!("dsh_home","");
+    let local_ver = simple_serve::get_local_ver();
+    let work_dir = simple_serve::get_work_dir(Some(&local_ver));
     #[cfg(windows)]
     simple_tauri::utils::show_env_cmd(&format!(indoc! {r#"
             set "DSH_HOME={}"
-            set "PATH=%DSH_HOME%/node_modules/.bin;%PATH%"
+            set "PATH={}/node_modules/.bin;%PATH%"
             cls
             cd ~
             dsh --help
-        "#},dsh_home));
+        "#},dsh_home,work_dir));
     #[cfg(not(windows))]
     simple_tauri::utils::show_env_cmd(&format!(indoc! {r#"
             export DSH_HOME="{}"
-            export PATH="$DSH_HOME/node_modules/.bin:$PATH"
+            export PATH="{}/node_modules/.bin:$PATH"
             clear
             cd ~
             dsh --help
-        "#},dsh_home));
+        "#},dsh_home,work_dir));
 }
