@@ -79,13 +79,22 @@ pub fn on_tray_before() -> Result<(), String> {
         show_load_tips("服务启动中");
         simple_serve::start()
             .map_err(|e| format!("服务器启动失败: {e}"))?;
-        show_load_tips("服务启动中 50%");
+        show_load_tips("服务启动中 20%");
         sh2rs!("sleep 1").ok();
         // 检测端口拉起成功才返回继续走托盘创建逻辑
         simple_serve::wait_port(port)
             .map_err(|e| format!("服务器启动超时: {e}"))?;
+        show_load_tips("服务启动中 60%");
+        sh2rs!("sleep 2").ok();
+        show_load_tips("服务启动中 80%");
+        // 获取主窗口url logs中找出"dsh web: "开头的行截取出后面的链接
+        let logs = simple_serve::get_log();
+        let url = logs.lines()
+            .find(|l| l.starts_with("dsh web: "))
+            .map(|l| l[9..].to_string())
+            .unwrap_or_default();
+        simple_tray::edit_window_item("main", |w| { w.url = url.to_string(); })?;
         show_load_tips("服务启动中 100%");
-        sh2rs!("sleep 1").ok();
     }
 
     if !silent_launch {
