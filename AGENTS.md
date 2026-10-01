@@ -15,19 +15,8 @@
 ## Work State
 ### Completed
 - 库+macros v0.3.0 发布到 crates.io
-- set_ipc_cmds! 支持 pub use 语句(提交 `6002f62`)
-- config::get 改为2参数: `get(key, default)`
-- `get_or!` 宏:字符串字面量 → `String`;变量 `&str` → `&str`;添加 `.to_owned()`(提交 `1634cb2`)
-- demo AGENTS.md 提交 3dff1c6
-- demo lib.rs 提交 c1954a9: 移除手动 ensure_node/pnpm 调用
-- 回答用户: `set_window_list!` 是过程宏，`format!` 返回运行时 `String`，无法作为过程宏输入
 - 库和 demo 均已推送到 origin
 - **Tauri IPC 问答**:后端返回 `serde_json::Value` → 前端 `invoke()` 自动反序列化为 JS 对象，无需手动 `JSON.parse`
-- **库 config.rs 提交 `16e88b0`** — config模块改进:
-  - `raw()` 返回值替代 Option，未初始化用 `"{}"` 兜底
-  - `set()` 写入前自动创建父目录(`create_dir_all`)
-  - `replace_value` 返回 `bool`，未找到 key 时追加到 JSON 对象末尾
-  - `load()` 优先检查文件是否存在；`PATH.set` 提前到文件存在检查之前
 
 ### Active
 - (none)
